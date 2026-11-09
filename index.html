@@ -1,8 +1,51 @@
 <!DOCTYPE html>
+<meta charset="utf-8">
 <html>
  <head>
-    <title></title>
-     <script></script>
+    <title>방문 카운터 쿠키</title>
+     <script>
+        let userName = GetCookie("username");
+        let count = GetCookie("count");
+        let ex = new Data(); //현재 시각에 대한 정보 전달
+        
+        if(username==null) {
+            count = 0 ; 
+            username = prompt("이름을 입력하세여");
+            if (username==null) {
+                alert("이름을 입력해야 쿠키에 저장됩니다");
+                username = "아무개";
+            }
+            else {
+                ex.setTime(ex.getTime() + (365 * 24 * 3600 * 1000));
+                setCookie("username",username,ex);
+            }
+        }
+        count++ 
+        ex.setTime(getTime() +(365 * 24 * 3600 * 1000) );
+        setCookie("count",count, ex);
+        document.write("<br>" + userName+ "님");
+        document.write(count + "번째 방문을 환영합니다");
+
+        function GetCookie(name) 
+        {
+            let p =document.cookie.split(":");
+            for(let i=0; i<p.length; i++) 
+            {
+               let pair = p[i].trim();
+               let unit =pair.split("=");
+               if(unit[0]==name) return unescape(unit[1]);
+            }
+        }
+        function setCookie(name, value, exDate) 
+        {
+            let cookieStr = name + "=" + escape(value);
+            if(exDate == null)
+             exDate =""; 
+            else 
+            exDate = ";expires=" + exDate.toGMTString();
+        document.cookie = cookieStr;
+        }
+     </script>
  </head>
     <body>
         

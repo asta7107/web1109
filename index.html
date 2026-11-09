@@ -1,54 +1,66 @@
 <!DOCTYPE html>
-<meta charset="utf-8">
 <html>
- <head>
+<head>
+    <meta charset="utf-8">
     <title>방문 카운터 쿠키</title>
-     <script>
+    <script>
         let userName = GetCookie("username");
         let count = GetCookie("count");
-        let ex = new Data(); //현재 시각에 대한 정보 전달
+        let ex = new Date(); // 수정 1: Data -> Date로 수정
         
-        if(username==null) {
-            count = 0 ; 
-            username = prompt("이름을 입력하세여");
-            if (username==null) {
+        // 수정 1: username -> userName 대소문자 통일
+        if (userName == null) {
+            count = 0; 
+            userName = prompt("이름을 입력하세요");
+            
+            if (userName == null || userName.trim() === "") {
                 alert("이름을 입력해야 쿠키에 저장됩니다");
-                username = "아무개";
+                userName = "아무개";
             }
-            else {
-                ex.setTime(ex.getTime() + (365 * 24 * 3600 * 1000));
-                setCookie("username",username,ex);
-            }
+            
+            ex.setTime(ex.getTime() + (365 * 24 * 3600 * 1000));
+            setCookie("username", userName, ex);
         }
-        count++ 
-        ex.setTime(getTime() +(365 * 24 * 3600 * 1000) );
-        setCookie("count",count, ex);
-        document.write("<br>" + userName+ "님");
-        document.write(count + "번째 방문을 환영합니다");
 
-        function GetCookie(name) 
-        {
-            let p =document.cookie.split(":");
-            for(let i=0; i<p.length; i++) 
-            {
-               let pair = p[i].trim();
-               let unit =pair.split("=");
-               if(unit[0]==name) return unescape(unit[1]);
+        // 숫자형으로 변환 후 카운트 증가 (처음 방문 시 NaN 방지)
+        count = parseInt(count) || 0;
+        count++; 
+
+        // 만료일 재설정 후 저장
+        ex.setTime(ex.getTime() + (365 * 24 * 3600 * 1000));
+        setCookie("count", count, ex);
+
+        // 쿠키 읽고 쓰는 함수들
+        function GetCookie(name) {
+            // 수정 4: 콜론(:) 대신 세미콜론(;)으로 분리
+            let p = document.cookie.split(";");
+            for (let i = 0; i < p.length; i++) {
+                let pair = p[i].trim();
+                let unit = pair.split("=");
+                if (unit[0] == name) {
+                    return unescape(unit[1]);
+                }
             }
+            return null; // 값이 없을 때 안전하게 null 반환
         }
-        function setCookie(name, value, exDate) 
-        {
+
+        function setCookie(name, value, exDate) {
             let cookieStr = name + "=" + escape(value);
-            if(exDate == null)
-             exDate =""; 
-            else 
-            exDate = ";expires=" + exDate.toGMTString();
-        document.cookie = cookieStr;
+            if (exDate == null) {
+                exDate = ""; 
+            } else {
+                exDate = ";expires=" + exDate.toGMTString();
+            }
+            // 수정 3: 만료일(exDate)을 쿠키 문자열 뒤에 반드시 붙여주어야 합니다!
+            document.cookie = cookieStr + exDate;
         }
-     </script>
- </head>
-    <body>
-        
-    </body>
+    </script>
+</head>
+<body>
+    <script>
+        // 화면 출력을 안전하게 body 영역 안쪽으로 이동
+        document.write("<br>" + userName + "님 반갑습니다! <br>");
+        document.write(count + "번째 방문을 환영합니다.");
+    </script>
+</body>
 </html>
- 
